@@ -34,12 +34,14 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
             viewHolder.ivProfilePic = (ImageView) convertView.findViewById(R.id.ivProfilePic);
             viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
             viewHolder.tvBody = (TextView) convertView.findViewById(R.id.tvBody);
+            viewHolder.tvRelativeTime = (TextView) convertView.findViewById(R.id.tvRelativeTime);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.tvUserName.setText(tweet.user.name);
         viewHolder.tvBody.setText(tweet.body);
+        viewHolder.tvRelativeTime.setText(tweet.createdAt);
         Picasso.with(getContext()).load(tweet.user.profileImage).into(viewHolder.ivProfilePic);
         return convertView;
     }
@@ -48,5 +50,6 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         private ImageView ivProfilePic;
         private TextView tvUserName;
         private TextView tvBody;
+        private TextView tvRelativeTime;
     }
 }

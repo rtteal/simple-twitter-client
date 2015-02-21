@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="10dp">
+    android:layout_height="match_parent" >
 
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:id="@+id/ivProfilePic"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:paddingRight="5dp"/>
+        android:padding="5dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvUserName"
+        android:paddingTop="5dp"
         android:layout_toRightOf="@+id/ivProfilePic"
         android:layout_alignTop="@+id/ivProfilePic" />
+
+    <TextView
+        android:id="@+id/tvRelativeTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvBody"
+        android:paddingBottom="5dp"
+        android:autoLink="all"
+        android:linksClickable="true"
         android:layout_toRightOf="@+id/ivProfilePic"
-        android:layout_alignBottom="@+id/ivProfilePic" />
+        android:layout_below="@+id/tvUserName"/>
 
 </RelativeLayout>
