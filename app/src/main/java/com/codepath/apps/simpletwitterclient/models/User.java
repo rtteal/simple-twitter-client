@@ -3,9 +3,6 @@ package com.codepath.apps.simpletwitterclient.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by rtteal on 2/17/2015.
- */
 public class User {
     public final String name, screenName, profileImage;
     public final long uid;
@@ -28,5 +25,10 @@ public class User {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("{id: %s, screenName: %s, name: %s, profileImage: %s", uid, screenName, name, profileImage);
     }
 }

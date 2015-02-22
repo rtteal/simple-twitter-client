@@ -1,14 +1,12 @@
 package com.codepath.apps.simpletwitterclient;
 
 import org.scribe.builder.api.Api;
-import org.scribe.builder.api.FlickrApi;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 /*
@@ -34,18 +32,7 @@ public class TwitterClient extends OAuthBaseClient {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
 
-	// CHANGE THIS
-	// DEFINE METHODS for different API endpoints here
-	public void getInterestingnessList(AsyncHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("?nojsoncallback=1&method=flickr.interestingness.getList");
-		// Can specify query string params directly or through RequestParams.
-		RequestParams params = new RequestParams();
-		params.put("format", "json");
-		client.get(apiUrl, params, handler);
-	}
-
     public void getHomeTimeline(AsyncHttpResponseHandler handler){
-        String apiUrl = getApiUrl("statuses/home_timeline.json");
         RequestParams params = new RequestParams();
         params.put("count", 25);
         params.put("since_id", 1);
@@ -55,6 +42,18 @@ public class TwitterClient extends OAuthBaseClient {
     public void getHomeTimeline(RequestParams params, AsyncHttpResponseHandler handler){
         String apiUrl = getApiUrl("statuses/home_timeline.json");
         getClient().get(apiUrl, params, handler);
+    }
+
+    public void sendTweet(String tweet, AsyncHttpResponseHandler handler){
+        String apiUrl = getApiUrl("statuses/update.json");
+        RequestParams params = new RequestParams();
+        params.put("status", tweet);
+        getClient().post(apiUrl, params, handler);
+    }
+
+    public void getCurrentUserInfo(AsyncHttpResponseHandler handler){
+        String apiUrl = getApiUrl("account/verify_credentials.json");
+        getClient().get(apiUrl, handler);
     }
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint

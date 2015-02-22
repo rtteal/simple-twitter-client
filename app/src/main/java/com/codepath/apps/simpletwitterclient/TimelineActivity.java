@@ -2,17 +2,16 @@ package com.codepath.apps.simpletwitterclient;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.codepath.apps.simpletwitterclient.R;
 import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter;
+import com.codepath.apps.simpletwitterclient.fragments.TweetFragment;
 import com.codepath.apps.simpletwitterclient.listeners.EndlessScrollListener;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
+import com.codepath.apps.simpletwitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -20,22 +19,21 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class TimelineActivity extends ActionBarActivity {
+public class TimelineActivity extends ActionBarActivity implements TweetFragment.TweetSendListener{
     private TwitterClient client;
     private List<Tweet> tweets = new ArrayList<>();
     private ListView lvTweets;
     private TweetArrayAdapter adapter;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        fetchCurrentUser();
         lvTweets = (ListView) findViewById(R.id.lvTweets);
         adapter = new TweetArrayAdapter(this, tweets);
         lvTweets.setAdapter(adapter);
@@ -45,7 +43,6 @@ public class TimelineActivity extends ActionBarActivity {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
                 customLoadMoreDataFromApi(adapter.getItem(adapter.getCount()-1).uid - 26);
-                Log.d("TAYDEBUG", adapter.getItem(adapter.getCount()-1).uid - 26 + "");
                 // or customLoadMoreDataFromApi(totalItemsCount);
             }
         });
@@ -69,9 +66,6 @@ public class TimelineActivity extends ActionBarActivity {
     }
 
     public void customLoadMoreDataFromApi(long offset) {
-        // This method probably sends out a network request and appends new data items to your adapter.
-        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
-        // Deserialize API response and then construct new objects to append to the adapter
         RequestParams params = new RequestParams();
         params.put("count", 25);
         params.put("max_id", offset);
@@ -104,10 +98,46 @@ public class TimelineActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_compose_tweet) {
+            TweetFragment tweetFragment = TweetFragment.newInstance(currentUser);
+            tweetFragment.show(getSupportFragmentManager(), "fragment_tweet");
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTweetSend(String tweet) {
+        if (null != tweet && tweet.trim().length() > 0){
+            client.sendTweet(tweet, new JsonHttpResponseHandler(){
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    tweets.add(0, Tweet.fromJson(response));
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    Log.e("ERROR", throwable.getMessage());
+                }
+            });
+        }
+    }
+
+    private void fetchCurrentUser(){
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.getCurrentUserInfo(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                currentUser = User.fromJson(response);
+                Log.d("Taylor", "user created: " + currentUser.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e("ERROR", throwable.getMessage());
+            }
+        });
     }
 }

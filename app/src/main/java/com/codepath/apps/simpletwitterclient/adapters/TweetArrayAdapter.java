@@ -14,14 +14,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by rtteal on 2/17/2015.
- */
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
     public TweetArrayAdapter(Context context, List<Tweet> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
-
     }
 
     @Override
