@@ -1,9 +1,11 @@
 package com.codepath.apps.simpletwitterclient.models;
 
-import android.text.format.DateUtils;
-import android.util.Log;
-
-import com.codepath.apps.simpletwitterclient.TwitterClient;
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Column.ForeignKeyAction;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,21 +17,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by rtteal on 2/17/2015.
- */
-public class Tweet {
-    public final String body, createdAt;
-    public final User user;
-    public final long uid; // unique id for tweet
+@Table(name = "Tweets")
+public class Tweet extends Model {
+    @Column(name = "body")
+    public String body;
+
+    @Column(name = "creation_time")
+    public long creationTime;
+
+    @Column(name = "user", onUpdate = ForeignKeyAction.CASCADE, onDelete = ForeignKeyAction.CASCADE)
+    public User user;
+
+    @Column(name = "remote_id",
+            onUpdate = ForeignKeyAction.CASCADE,
+            onDelete = ForeignKeyAction.CASCADE)
+    public long uid;
+
+    public String createdAt;
+
     private static final int ONE_MINUTE = 60;
     private static final int ONE_HOUR = 60 * 60;
     private static final int ONE_DAY = 60 * 60 * 24;
     private static final int ONE_WEEK = 60 * 60 * 24 * 7;
 
-    public Tweet(String body, String createdAt, long uid, User user) {
+    public Tweet(){
+    }
+
+    public Tweet(String body, long creationTime, long uid, User user) {
         this.body = body;
-        this.createdAt = createdAt;
+        this.creationTime = creationTime;
+        this.createdAt = getFormattedTime(creationTime);
         this.uid = uid;
         this.user = user;
     }
@@ -38,29 +55,49 @@ public class Tweet {
         try {
             String body = json.getString("text");
             long uid = json.getLong("id");
-            String createAt = json.getString("created_at");
+            Tweet t = getById(uid);
+            if (null != t) return t;
+            long creationTime = getCreationTime(json.getString("created_at"));
             User user = User.fromJson(json.getJSONObject("user"));
-            return new Tweet(body, getFormattedTime(createAt), uid, user);
+            Tweet tweet = new Tweet(body, creationTime, uid, user);
+            tweet.save();
+            return tweet;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    public static Tweet getById(long id){
+        return new Select().from(Tweet.class).where("remote_id = ?", id).executeSingle();
+    }
+
     public static List<Tweet> fromJsonArray(JSONArray jsonArray){
         List<Tweet> tweets = new ArrayList<>(jsonArray.length());
-        for (int i = 0; i < jsonArray.length(); i++){
-            try {
-                Tweet t = fromJson(jsonArray.getJSONObject(i));
-                if (null != t) tweets.add(t);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        ActiveAndroid.beginTransaction();
+        try {
+            for (int i = 0; i < jsonArray.length(); i++){
+                try {
+                    Tweet t = fromJson(jsonArray.getJSONObject(i));
+                    if (null != t) {
+                        tweets.add(t);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
         }
         return tweets;
     }
 
-    private static String getFormattedTime(final String input){
+    public static List<Tweet> recentItems() {
+        return new Select().from(Tweet.class).orderBy("creation_time DESC").limit("300").execute();
+    }
+
+    private static long getCreationTime(final String input){
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);
@@ -71,11 +108,13 @@ public class Tweet {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return longCreatedAt;
+    }
 
+    private static String getFormattedTime(final long longCreatedAt){
         final long now = System.currentTimeMillis()/1000;
         final long elapsedTime = now - longCreatedAt;
-        Log.d("Taylor", String.format("longCreatedAt: %s, now: %s, elapsedTime: %s", longCreatedAt, now, elapsedTime));
-        if (elapsedTime < 0) { // suspect that timezone is causing some of these to be negative
+        if (elapsedTime < 1) {
             return "1s";
         } else if(elapsedTime < ONE_MINUTE){
             return elapsedTime + "s";
@@ -88,5 +127,9 @@ public class Tweet {
         } else {
             return Math.round(elapsedTime/ONE_WEEK) + "w";
         }
+    }
+
+    public String getCreatedAt() {
+        return getFormattedTime(creationTime);
     }
 }

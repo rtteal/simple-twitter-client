@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletwitterclient.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         }
         viewHolder.tvUserName.setText(tweet.user.name);
         viewHolder.tvBody.setText(tweet.body);
-        viewHolder.tvRelativeTime.setText(tweet.createdAt);
+        viewHolder.tvRelativeTime.setText(tweet.getCreatedAt());
         Picasso.with(getContext()).load(tweet.user.profileImage).into(viewHolder.ivProfilePic);
         return convertView;
     }

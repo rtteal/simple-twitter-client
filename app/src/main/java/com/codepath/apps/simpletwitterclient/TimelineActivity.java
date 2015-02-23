@@ -12,6 +12,7 @@ import com.codepath.apps.simpletwitterclient.fragments.TweetFragment;
 import com.codepath.apps.simpletwitterclient.listeners.EndlessScrollListener;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
 import com.codepath.apps.simpletwitterclient.models.User;
+import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -33,6 +34,7 @@ public class TimelineActivity extends ActionBarActivity implements TweetFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        client = TwitterApplication.getRestClient();
         fetchCurrentUser();
         lvTweets = (ListView) findViewById(R.id.lvTweets);
         adapter = new TweetArrayAdapter(this, tweets);
@@ -46,7 +48,6 @@ public class TimelineActivity extends ActionBarActivity implements TweetFragment
                 // or customLoadMoreDataFromApi(totalItemsCount);
             }
         });
-        client = TwitterApplication.getRestClient();
         populateTimeline();
     }
 
@@ -60,12 +61,18 @@ public class TimelineActivity extends ActionBarActivity implements TweetFragment
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("ERROR", errorResponse.toString());
+                Log.e("ERROR", throwable.getMessage());
+                populateTimelineFromDb();
             }
         });
     }
 
-    public void customLoadMoreDataFromApi(long offset) {
+    private void populateTimelineFromDb(){
+        adapter.clear();
+        adapter.addAll(Tweet.recentItems());
+    }
+
+    private void customLoadMoreDataFromApi(long offset) {
         RequestParams params = new RequestParams();
         params.put("count", 25);
         params.put("max_id", offset);
@@ -78,7 +85,8 @@ public class TimelineActivity extends ActionBarActivity implements TweetFragment
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("ERROR", errorResponse.toString());
+                Log.e("ERROR", throwable.getMessage());
+                populateTimelineFromDb();
             }
         });
     }
@@ -103,30 +111,32 @@ public class TimelineActivity extends ActionBarActivity implements TweetFragment
             tweetFragment.show(getSupportFragmentManager(), "fragment_tweet");
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onTweetSend(String tweet) {
-        if (null != tweet && tweet.trim().length() > 0){
-            client.sendTweet(tweet, new JsonHttpResponseHandler(){
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    tweets.add(0, Tweet.fromJson(response));
-                    adapter.notifyDataSetChanged();
-                }
+        if (!TwitterHelpers.checkForInternetConnectivity(this)) {
+            if (null != tweet && tweet.trim().length() > 0) {
+                client.sendTweet(tweet, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        tweets.add(0, Tweet.fromJson(response));
+                        adapter.notifyDataSetChanged();
+                    }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.e("ERROR", throwable.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        Log.e("ERROR", throwable.getMessage());
+                        populateTimelineFromDb();
+                    }
+                });
+            }
         }
     }
 
     private void fetchCurrentUser(){
-        TwitterClient client = TwitterApplication.getRestClient();
+        TwitterHelpers.checkForInternetConnectivity(this);
         client.getCurrentUserInfo(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -135,7 +145,7 @@ public class TimelineActivity extends ActionBarActivity implements TweetFragment
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e("ERROR", throwable.getMessage());
             }
         });
