@@ -30,6 +30,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
             viewHolder = new ViewHolder();
             viewHolder.ivProfilePic = (ImageView) convertView.findViewById(R.id.ivProfilePic);
             viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
+            viewHolder.tvScreenName = (TextView) convertView.findViewById(R.id.tvScreenName);
             viewHolder.tvBody = (TextView) convertView.findViewById(R.id.tvBody);
             viewHolder.tvRelativeTime = (TextView) convertView.findViewById(R.id.tvRelativeTime);
             convertView.setTag(viewHolder);
@@ -39,6 +40,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder.tvUserName.setText(tweet.user.name);
         viewHolder.tvBody.setText(tweet.body);
         viewHolder.tvRelativeTime.setText(tweet.getCreatedAt());
+        viewHolder.tvScreenName.setText("@" + tweet.user.screenName);
         Picasso.with(getContext()).load(tweet.user.profileImage).into(viewHolder.ivProfilePic);
         return convertView;
     }
@@ -46,6 +48,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
     private static class ViewHolder{
         private ImageView ivProfilePic;
         private TextView tvUserName;
+        private TextView tvScreenName;
         private TextView tvBody;
         private TextView tvRelativeTime;
     }

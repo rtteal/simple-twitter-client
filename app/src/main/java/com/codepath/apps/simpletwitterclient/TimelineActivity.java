@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ListView;
 
 import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter;
