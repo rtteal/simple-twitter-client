@@ -16,14 +16,20 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
+    private final Context context;
+
+    public interface OnProfileClickListener{
+        void onProfileClick(String screenName);
+    }
 
     public TweetArrayAdapter(Context context, List<Tweet> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
+        this.context = context;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Tweet tweet = getItem(position);
+        final Tweet tweet = getItem(position);
         ViewHolder viewHolder;
         if (null == convertView){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweet, parent, false);
@@ -42,6 +48,16 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder.tvRelativeTime.setText(tweet.getCreatedAt());
         viewHolder.tvScreenName.setText("@" + tweet.user.screenName);
         Picasso.with(getContext()).load(tweet.user.profileImage).into(viewHolder.ivProfilePic);
+        viewHolder.ivProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("clickdebug1", "screenname:" + tweet.user.screenName);
+                if (context instanceof OnProfileClickListener){
+                    Log.d("clickdebug1.1", "screenname:" + tweet.user.screenName);
+                    ((OnProfileClickListener) context).onProfileClick(tweet.user.screenName);
+                }
+            }
+        });
         return convertView;
     }
 
@@ -52,4 +68,5 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         private TextView tvBody;
         private TextView tvRelativeTime;
     }
+
 }
