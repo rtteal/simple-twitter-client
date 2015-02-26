@@ -21,6 +21,15 @@ public class User extends Model {
     @Column(name = "profile_image")
     public String profileImage;
 
+    @Column(name = "tag_line")
+    public String tagLine;
+
+    @Column(name = "followers")
+    public int followers;
+
+    @Column(name = "following")
+    public int following;
+
     @Column(name = "remote_id",
             unique = true,
             onUpdate = Column.ForeignKeyAction.CASCADE,
@@ -30,11 +39,15 @@ public class User extends Model {
     public User(){
     }
 
-    public User(String name, String screenName, String profileImage, long uid) {
+    public User(String name, String screenName, String profileImage, long uid,
+                String tagLine, int followers, int following) {
         this.name = name;
         this.screenName = screenName;
         this.profileImage = profileImage;
         this.uid = uid;
+        this.tagLine = tagLine;
+        this.followers = followers;
+        this.following = following;
     }
 
     public static User fromJson(JSONObject json){
@@ -43,7 +56,10 @@ public class User extends Model {
             long id = json.getLong("id");
             String screenName = json.getString("screen_name");
             String profileImage = json.getString("profile_image_url");
-            User user = new User(name, screenName, profileImage, id);
+            String tagLine = json.getString("description");
+            int followers = json.getInt("followers_count");
+            int following = json.getInt("friends_count");
+            User user = new User(name, screenName, profileImage, id, tagLine, followers, following);
             User persistedUser = getById(id);
             if (null != persistedUser) {
                 return persistedUser;
@@ -58,7 +74,8 @@ public class User extends Model {
 
     @Override
     public String toString(){
-        return String.format("{id: %s, screenName: %s, name: %s, profileImage: %s", uid, screenName, name, profileImage);
+        return String.format("{id: %s, screenName: %s, name: %s, profileImage: %s," +
+                " tagLine: %s, followers: %s, following: %s}", uid, screenName, name, profileImage, tagLine, followers, following);
     }
 
     public List<Tweet> items() {

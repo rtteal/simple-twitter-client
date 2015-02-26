@@ -10,7 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -21,14 +21,13 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="TwitterClient.db" />
+            android:value="Twitter.db" />
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.codepath.apps.simpletwitterclient.models.User,
-                com.codepath.apps.simpletwitterclient.models.Tweet" />
+            android:value="com.codepath.apps.simpletwitterclient.models.User,                 com.codepath.apps.simpletwitterclient.models.Tweet" />
 
         <activity
             android:name=".LoginActivity"
@@ -52,6 +51,10 @@
         <activity
             android:name=".TimelineActivity"
             android:label="@string/title_activity_timeline" >
+        </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile" >
         </activity>
     </application>
 

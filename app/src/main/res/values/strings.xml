@@ -10,5 +10,11 @@
     <string name="compose">Compose</string>
     <string name="title_activity_tweet">TweetActivity</string>
     <string name="whats_happening">What\'s happening?</string>
+    <string name="profile">Profile</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="name">Name</string>
+    <string name="tagline">TagLine</string>
+    <string name="followers">5 Followers</string>
+    <string name="following">5 Following</string>
 
 </resources>

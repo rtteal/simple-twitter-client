@@ -25,9 +25,11 @@ public class TwitterHelpers {
     }
 
     private static Boolean isNetworkAvailable(Context context) {
+        return true;
+        /*
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting(); */
     }
 }
