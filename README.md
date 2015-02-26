@@ -1,4 +1,41 @@
 # SimpleTwitterClient
+[Week 4 Project: Simple Twitter Client](http://courses.codepath.com/courses/intro_to_android/week/4#!assignment)
+
+Time spent: 4 hours in total
+
+Completed user stories:
+
+ * [x] Includes all required user stories from Week 3 Twitter Client
+ * [x] User can switch between Timeline and Mention views using tabs.
+   * [x] User can view their home timeline tweets.
+   * [x] User can view the recent mentions of their username.
+ * [x] User can navigate to view their own profile
+   * [x] User can see picture, tagline, # of followers, # of following, and tweets on their profile.
+ * User can click on the profile image in any tweet to see another user's profile.
+   * User can see picture, tagline, # of followers, # of following, and tweets of clicked user.
+   * Profile view should include that user's timeline
+   * Optional: User can view following / followers list through the profile
+ * User can infinitely paginate any of these timelines (home, mentions, user) by scrolling to the bottom
+
+The following advanced user stories are optional:
+ * Advanced: Robust error handling, check if internet is available, handle error cases, network failures
+ * Advanced: When a network request is sent, user sees an indeterminate progress indicator
+ * Advanced: User can "reply" to any tweet on their home timeline
+   * The user that wrote the original tweet is automatically "@" replied in compose
+ * Advanced: User can click on a tweet to be taken to a "detail view" of that tweet
+   * Advanced: User can take favorite (and unfavorite) or reweet actions on a tweet
+ * Advanced: Improve the user interface and theme the app to feel twitter branded
+ * Advanced: User can search for tweets matching a particular query and see results
+ * Bonus: User can view their direct messages (or send new ones)
+
+Walkthrough of all user stories:
+
+![Video Walkthrough](SimpleTwitterClient2.gif)
+
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+
+
 [Week 3 Project: Simple Twitter Client](http://courses.codepath.com/courses/intro_to_android/week/3#!assignment)
 
 Time spent: 10 hours in total
