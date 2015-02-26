@@ -18,12 +18,13 @@ import com.codepath.apps.simpletwitterclient.fragments.TweetFragment;
 import com.codepath.apps.simpletwitterclient.fragments.TweetFragment.TweetSendListener;
 import com.codepath.apps.simpletwitterclient.models.User;
 import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
+import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter.OnProfileClickListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
 
-public class TimelineActivity extends ActionBarActivity implements TweetSendListener {
+public class TimelineActivity extends ActionBarActivity implements TweetSendListener, OnProfileClickListener {
     private ViewPager vpPager;
     private User currentUser;
     private HomeTimelineFragment homeTimelineFragment;
@@ -87,6 +88,13 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
 
     public void onProfileView(MenuItem item) {
         Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+    }
+
+    @Override
+    public void onProfileClick(String screenName) {
+        Intent i = new Intent(this, ProfileActivity.class);
+        i.putExtra("screen_name", screenName);
         startActivity(i);
     }
 

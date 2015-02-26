@@ -3,6 +3,7 @@ package com.codepath.apps.simpletwitterclient;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -10,11 +11,13 @@ import android.widget.TextView;
 
 import com.codepath.apps.simpletwitterclient.R;
 import com.codepath.apps.simpletwitterclient.fragments.UserTimelineFragment;
+import com.codepath.apps.simpletwitterclient.models.Tweet;
 import com.codepath.apps.simpletwitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ProfileActivity extends ActionBarActivity {
@@ -26,21 +29,28 @@ public class ProfileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         client = TwitterApplication.getRestClient();
-        client.getCurrentUserInfo(new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
-                user = User.fromJson(json);
-                getSupportActionBar().setTitle("@" + user.screenName);
-                populateProfileHeader(user);
-            }
-        });
-        if (null == savedInstanceState){
-            String screenName = getIntent().getStringExtra("screen_name");
+        String screenName = getIntent().getStringExtra("screen_name");
+        Log.d("profiledebug", "screenName: " + screenName);
+        //if (null == savedInstanceState){
             UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.flContainer, fragmentUserTimeline);
             ft.commit();
-        }
+        //}
+        client.getUserTimeline(screenName, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                user = Tweet.fromJsonArray(response).get(0).user;
+                getSupportActionBar().setTitle("@" + user.screenName);
+                populateProfileHeader(user);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e("Error", throwable.getMessage());
+            }
+        });
+
     }
 
     private void populateProfileHeader(User user) {

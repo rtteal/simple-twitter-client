@@ -16,7 +16,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
-    private final Context context;
 
     public interface OnProfileClickListener{
         void onProfileClick(String screenName);
@@ -24,7 +23,6 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
     public TweetArrayAdapter(Context context, List<Tweet> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
-        this.context = context;
     }
 
     @Override
@@ -51,10 +49,8 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder.ivProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("clickdebug1", "screenname:" + tweet.user.screenName);
-                if (context instanceof OnProfileClickListener){
-                    Log.d("clickdebug1.1", "screenname:" + tweet.user.screenName);
-                    ((OnProfileClickListener) context).onProfileClick(tweet.user.screenName);
+                if (getContext() instanceof OnProfileClickListener){
+                    ((OnProfileClickListener) getContext()).onProfileClick(tweet.user.screenName);
                 }
             }
         });

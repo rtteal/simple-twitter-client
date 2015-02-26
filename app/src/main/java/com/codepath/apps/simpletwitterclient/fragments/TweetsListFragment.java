@@ -18,7 +18,7 @@ import com.codepath.apps.simpletwitterclient.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TweetsListFragment extends Fragment implements TweetArrayAdapter.OnProfileClickListener {
+public class TweetsListFragment extends Fragment {
     List<Tweet> tweets = new ArrayList<>();
     private ListView lvTweets;
     TweetArrayAdapter adapter;
@@ -56,10 +56,5 @@ public class TweetsListFragment extends Fragment implements TweetArrayAdapter.On
 
     public void setOnScrollListener(OnScrollListener onScrollListener){
         lvTweets.setOnScrollListener(onScrollListener);
-    }
-
-    @Override
-    public void onProfileClick(String screenName) {
-        Log.d("clickdebug2", "screenname:" + screenName);
     }
 }
