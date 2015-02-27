@@ -12,8 +12,12 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * This class displays the tweets from this user.
+ */
 public class UserTimelineFragment extends TweetsListFragment{
-    private TwitterClient client;
+    private TwitterClient client = TwitterApplication.getRestClient();
+    private static final String TAG = UserTimelineFragment.class.getSimpleName();
 
     public static UserTimelineFragment newInstance(String screenName) {
         UserTimelineFragment userTimelineFragment = new UserTimelineFragment();
@@ -24,14 +28,7 @@ public class UserTimelineFragment extends TweetsListFragment{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        client = TwitterApplication.getRestClient();
-        //fetchCurrentUser();
-        populateTimeline();
-    }
-
-    private void populateTimeline() {
+    void populateTimeline() {
         client.getUserTimeline(getArguments().getString("screen_name"), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -40,14 +37,26 @@ public class UserTimelineFragment extends TweetsListFragment{
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("ERROR", throwable.getMessage());
+                Log.d(TAG, throwable.getMessage());
                 populateTimelineFromDb();
             }
         });
     }
 
-    private void populateTimelineFromDb(){
-        clear();
-        addAll(Tweet.recentItems());
+    @Override
+    void customLoadMoreDataFromApi(long offset) {
+        client.getUserTimeline(offset, getArguments().getString("screen_name"), new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                addAll(Tweet.fromJsonArray(response));
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(TAG, throwable.getMessage());
+                populateTimelineFromDb();
+            }
+        });
     }
 }
+

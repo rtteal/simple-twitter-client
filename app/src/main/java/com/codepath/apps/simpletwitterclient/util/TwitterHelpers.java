@@ -3,8 +3,6 @@ package com.codepath.apps.simpletwitterclient.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 public class TwitterHelpers {
     public static boolean checkForInternetConnectivity(Context context) {

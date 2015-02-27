@@ -30,7 +30,7 @@
             android:value="com.codepath.apps.simpletwitterclient.models.User,                 com.codepath.apps.simpletwitterclient.models.Tweet" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,11 +49,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TimelineActivity"
+            android:name=".activities.TimelineActivity"
             android:label="@string/title_activity_timeline" >
         </activity>
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile" >
         </activity>
     </application>

@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    tools:context="com.codepath.apps.simpletwitterclient.TimelineActivity">
+    tools:context="com.codepath.apps.simpletwitterclient.activities.TimelineActivity">
 <!--
     <fragment
         android:layout_width="wrap_content"

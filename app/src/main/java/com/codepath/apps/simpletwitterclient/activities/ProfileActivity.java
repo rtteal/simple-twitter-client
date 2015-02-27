@@ -1,8 +1,8 @@
-package com.codepath.apps.simpletwitterclient;
+package com.codepath.apps.simpletwitterclient.activities;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.simpletwitterclient.R;
+import com.codepath.apps.simpletwitterclient.TwitterApplication;
+import com.codepath.apps.simpletwitterclient.TwitterClient;
 import com.codepath.apps.simpletwitterclient.fragments.UserTimelineFragment;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
 import com.codepath.apps.simpletwitterclient.models.User;

@@ -15,16 +15,16 @@ Completed user stories:
    * [x] User can see picture, tagline, # of followers, # of following, and tweets of clicked user.
    * [x] Profile view should include that user's timeline
    * Optional: User can view following / followers list through the profile
- * User can infinitely paginate any of these timelines (home, mentions, user) by scrolling to the bottom
+ * [x] User can infinitely paginate any of these timelines (home, mentions, user) by scrolling to the bottom
 
 The following advanced user stories are optional:
- * Advanced: Robust error handling, check if internet is available, handle error cases, network failures
+ * [x] Advanced: Robust error handling, check if internet is available, handle error cases, network failures
  * Advanced: When a network request is sent, user sees an indeterminate progress indicator
  * Advanced: User can "reply" to any tweet on their home timeline
    * The user that wrote the original tweet is automatically "@" replied in compose
  * Advanced: User can click on a tweet to be taken to a "detail view" of that tweet
    * Advanced: User can take favorite (and unfavorite) or reweet actions on a tweet
- * Advanced: Improve the user interface and theme the app to feel twitter branded
+ * [x] Advanced: Improve the user interface and theme the app to feel twitter branded
  * Advanced: User can search for tweets matching a particular query and see results
  * Bonus: User can view their direct messages (or send new ones)
 

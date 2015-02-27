@@ -1,33 +1,40 @@
-package com.codepath.apps.simpletwitterclient;
+package com.codepath.apps.simpletwitterclient.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.codepath.apps.simpletwitterclient.R;
+import com.codepath.apps.simpletwitterclient.TwitterApplication;
+import com.codepath.apps.simpletwitterclient.adapters.SmartFragmentStatePagerAdapter;
+import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter.OnProfileClickListener;
 import com.codepath.apps.simpletwitterclient.fragments.HomeTimelineFragment;
 import com.codepath.apps.simpletwitterclient.fragments.MentionsTimelineFragment;
 import com.codepath.apps.simpletwitterclient.fragments.TweetFragment;
 import com.codepath.apps.simpletwitterclient.fragments.TweetFragment.TweetSendListener;
 import com.codepath.apps.simpletwitterclient.models.User;
 import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
-import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter.OnProfileClickListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
 public class TimelineActivity extends ActionBarActivity implements TweetSendListener, OnProfileClickListener {
+    private static final String TAG = TimelineActivity.class.getSimpleName();
     private ViewPager vpPager;
     private User currentUser;
-    private HomeTimelineFragment homeTimelineFragment;
+    private TweetsPagerAdapter tweetsPagerAdapter;
+    //private HomeTimelineFragment homeTimelineFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +42,8 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
         setContentView(R.layout.activity_timeline);
         fetchCurrentUser();
         vpPager = (ViewPager) findViewById(R.id.viewpager);
-        TweetsPagerAdapter adapter = new TweetsPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(adapter);
-        homeTimelineFragment = adapter.homeTimelineFragment;
+        tweetsPagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(tweetsPagerAdapter);
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
     }
@@ -71,19 +77,20 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 currentUser = User.fromJson(response);
-                Log.d("Taylor", "user created: " + currentUser);
+                Log.d(TAG, "user created: " + currentUser);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("ERROR", throwable.getMessage());
+                Log.e(TAG, throwable.getMessage());
             }
         });
     }
 
     @Override
     public void onTweetSend(String tweet) {
-        homeTimelineFragment.onTweetSend(tweet);
+        ((TweetSendListener) tweetsPagerAdapter.getRegisteredFragment(0)).onTweetSend(tweet);
+        vpPager.setCurrentItem(0, true);
     }
 
     public void onProfileView(MenuItem item) {
@@ -98,9 +105,8 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
         startActivity(i);
     }
 
-    public class TweetsPagerAdapter extends FragmentPagerAdapter{
+    public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
         private final String[] tabTitles = {"Home", "Mentions"};
-        HomeTimelineFragment homeTimelineFragment = new HomeTimelineFragment();
 
         public TweetsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -109,11 +115,11 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return homeTimelineFragment;
+                return new HomeTimelineFragment();
             } else if (position == 1) {
                 return new MentionsTimelineFragment();
             }
-            Log.e("Error", "TweetsPagerAdapter.getItem returned the default");
+            Log.e(TAG, "TweetsPagerAdapter.getItem returned the default");
             return new HomeTimelineFragment(); // fail-safe, shouldn't happen
         }
 
