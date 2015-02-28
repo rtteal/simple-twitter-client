@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.widget.ProgressBar;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.simpletwitterclient.R;
@@ -34,12 +36,13 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
     private ViewPager vpPager;
     private User currentUser;
     private TweetsPagerAdapter tweetsPagerAdapter;
-    //private HomeTimelineFragment homeTimelineFragment;
+    //private ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        //pb = (ProgressBar) findViewById(R.id.pbLoading);
         fetchCurrentUser();
         vpPager = (ViewPager) findViewById(R.id.viewpager);
         tweetsPagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
@@ -104,6 +107,14 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
         i.putExtra("screen_name", screenName);
         startActivity(i);
     }
+
+    /*public void showProgressBar() {
+        pb.setVisibility(ProgressBar.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        pb.setVisibility(ProgressBar.INVISIBLE);
+    } */
 
     public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
         private final String[] tabTitles = {"Home", "Mentions"};

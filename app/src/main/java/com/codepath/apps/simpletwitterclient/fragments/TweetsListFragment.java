@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.codepath.apps.simpletwitterclient.R;
 import com.codepath.apps.simpletwitterclient.TwitterApplication;
@@ -32,6 +33,7 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
     private TweetArrayAdapter adapter;
     private TwitterClient client = TwitterApplication.getRestClient();
     private static final String TAG = TweetsListFragment.class.getSimpleName();
+    ProgressBar pb;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pb = (ProgressBar) getActivity().findViewById(R.id.pbLoading);
         adapter = new TweetArrayAdapter(getActivity(), tweets);
         populateTimeline();
     }
@@ -58,15 +61,18 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
     public void onTweetSend(String tweet) {
         if (!TwitterHelpers.checkForInternetConnectivity(getActivity())) {
             if (null != tweet && tweet.trim().length() > 0) {
+                showProgressBar();
                 client.sendTweet(tweet, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        hideProgressBar();
                         adapter.insert(Tweet.fromJson(response), 0);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         Log.e(TAG, throwable.getMessage());
+                        hideProgressBar();
                         populateTimelineFromDb();
                     }
                 });
@@ -81,6 +87,14 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
     void populateTimelineFromDb(){
         adapter.clear();
         addAll(Tweet.recentItems());
+    }
+
+    public void showProgressBar() {
+        pb.setVisibility(ProgressBar.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        pb.setVisibility(ProgressBar.INVISIBLE);
     }
 
     abstract void customLoadMoreDataFromApi(long offset);

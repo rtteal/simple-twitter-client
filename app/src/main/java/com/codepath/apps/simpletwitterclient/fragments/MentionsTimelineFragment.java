@@ -18,33 +18,38 @@ public class MentionsTimelineFragment extends TweetsListFragment {
 
     @Override
     void populateTimeline() {
+        showProgressBar();
         client.getMentionsTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d(TAG, "fetching mentions");
                 addAll(Tweet.fromJsonArray(response));
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG, throwable.getMessage());
                 populateTimelineFromDb();
+                hideProgressBar();
             }
         });
     }
 
     @Override
     void customLoadMoreDataFromApi(long offset) {
+        showProgressBar();
         client.getMentionsTimeline(offset, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 addAll(Tweet.fromJsonArray(response));
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG, throwable.getMessage());
                 populateTimelineFromDb();
+                hideProgressBar();
             }
         });
     }

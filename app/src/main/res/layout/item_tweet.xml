@@ -47,5 +47,4 @@
         android:linksClickable="true"
         android:layout_toRightOf="@+id/ivProfilePic"
         android:layout_below="@+id/tvUserName"/>
-
 </RelativeLayout>

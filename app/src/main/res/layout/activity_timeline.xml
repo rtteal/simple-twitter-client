@@ -33,4 +33,11 @@
         android:layout_below="@+id/tabs"
         android:background="@android:color/white" />
 
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>

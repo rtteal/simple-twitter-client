@@ -18,32 +18,38 @@ public class HomeTimelineFragment extends TweetsListFragment{
 
     @Override
     void populateTimeline() {
+        showProgressBar();
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 addAll(Tweet.fromJsonArray(response));
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG, throwable.getMessage());
                 populateTimelineFromDb();
+                hideProgressBar();
             }
         });
     }
 
     @Override
     void customLoadMoreDataFromApi(long offset) {
+        showProgressBar();
         client.getHomeTimeline(offset, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 addAll(Tweet.fromJsonArray(response));
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG, throwable.getMessage());
                 populateTimelineFromDb();
+                hideProgressBar();
             }
         });
     }

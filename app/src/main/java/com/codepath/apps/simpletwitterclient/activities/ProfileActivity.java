@@ -33,12 +33,12 @@ public class ProfileActivity extends ActionBarActivity {
         client = TwitterApplication.getRestClient();
         String screenName = getIntent().getStringExtra("screen_name");
         Log.d("profiledebug", "screenName: " + screenName);
-        //if (null == savedInstanceState){
+        if (null == savedInstanceState){
             UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.flContainer, fragmentUserTimeline);
             ft.commit();
-        //}
+        }
         client.getUserTimeline(screenName, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
