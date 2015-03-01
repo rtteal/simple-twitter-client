@@ -14,7 +14,9 @@
     <string name="title_activity_profile">Profile</string>
     <string name="name">Name</string>
     <string name="tagline">TagLine</string>
+    <string name="tweets">5 Tweets</string>
     <string name="followers">5 Followers</string>
     <string name="following">5 Following</string>
+    <string name="screen_name">ScreenName</string>
 
 </resources>

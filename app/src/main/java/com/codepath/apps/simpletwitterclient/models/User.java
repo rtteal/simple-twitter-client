@@ -12,6 +12,7 @@ import java.util.List;
 
 @Table(name = "Users")
 public class User extends Model {
+    private static final String TAG = User.class.getSimpleName();
     @Column(name = "name")
     public String name;
 
@@ -30,6 +31,12 @@ public class User extends Model {
     @Column(name = "following")
     public int following;
 
+    @Column(name = "tweets")
+    public int tweets;
+
+    @Column(name="profile_banner_url")
+    public String profileBannerUrl;
+
     @Column(name = "remote_id",
             unique = true,
             onUpdate = Column.ForeignKeyAction.CASCADE,
@@ -40,7 +47,7 @@ public class User extends Model {
     }
 
     public User(String name, String screenName, String profileImage, long uid,
-                String tagLine, int followers, int following) {
+                String tagLine, int followers, int following, String profileBannerUrl, int tweets) {
         this.name = name;
         this.screenName = screenName;
         this.profileImage = profileImage;
@@ -48,6 +55,8 @@ public class User extends Model {
         this.tagLine = tagLine;
         this.followers = followers;
         this.following = following;
+        this.profileBannerUrl = profileBannerUrl;
+        this.tweets = tweets;
     }
 
     public static User fromJson(JSONObject json){
@@ -59,12 +68,13 @@ public class User extends Model {
             String tagLine = json.getString("description");
             int followers = json.getInt("followers_count");
             int following = json.getInt("friends_count");
-            User user = new User(name, screenName, profileImage, id, tagLine, followers, following);
+            int tweets = json.getInt("statuses_count");
+            String profileBannerUrl = json.isNull("profile_banner_url") ? "" : json.getString("profile_banner_url");
+            User user = new User(name, screenName, profileImage, id, tagLine, followers, following, profileBannerUrl, tweets);
             User persistedUser = getById(id);
-            if (null != persistedUser) {
-                return persistedUser;
+            if (null == persistedUser) {
+                user.save();
             }
-            user.save();
             return user;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -75,7 +85,8 @@ public class User extends Model {
     @Override
     public String toString(){
         return String.format("{id: %s, screenName: %s, name: %s, profileImage: %s," +
-                " tagLine: %s, followers: %s, following: %s}", uid, screenName, name, profileImage, tagLine, followers, following);
+                " tagLine: %s, followers: %s, following: %s, profileBannerUrl: %s}",
+                uid, screenName, name, profileImage, tagLine, followers, following, profileBannerUrl);
     }
 
     public List<Tweet> items() {

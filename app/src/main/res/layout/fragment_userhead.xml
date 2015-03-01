@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/ivProfileBannerUrl"
+        android:layout_width="fill_parent"
+        android:layout_height="155dp"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop"/>
+
+    <RelativeLayout
+        android:id="@+id/rlUserHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:id="@+id/ivProfilePic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="3dp"
+            android:background="@color/white"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:src="@android:drawable/screen_background_light_transparent"/>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textColor="@color/white"
+            android:layout_below="@+id/ivProfilePic"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:text="@string/name"/>
+
+        <TextView
+            android:id="@+id/tvScreenName"
+            android:layout_below="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:text="@string/screen_name"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llCounts"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/ivProfileBannerUrl">
+
+        <TextView
+            android:id="@+id/tvTweets"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/rectangle"
+            android:text="@string/followers"/>
+
+        <TextView
+            android:id="@+id/tvFollowers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/rectangle"
+            android:text="@string/followers"/>
+
+        <TextView
+            android:id="@+id/tvFollowing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/rectangle"
+            android:layout_weight="1"
+            android:text="@string/following"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

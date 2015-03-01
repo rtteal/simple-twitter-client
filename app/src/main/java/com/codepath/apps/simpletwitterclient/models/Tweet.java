@@ -55,12 +55,13 @@ public class Tweet extends Model {
         try {
             String body = json.getString("text");
             long uid = json.getLong("id");
-            Tweet t = getById(uid);
-            if (null != t) return t;
             long creationTime = getCreationTime(json.getString("created_at"));
             User user = User.fromJson(json.getJSONObject("user"));
             Tweet tweet = new Tweet(body, creationTime, uid, user);
-            tweet.save();
+            Tweet t = getById(uid);
+            if (null == t) {
+                tweet.save();
+            }
             return tweet;
         } catch (JSONException e) {
             e.printStackTrace();

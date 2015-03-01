@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
+    private static final String TAG = TweetArrayAdapter.class.getSimpleName();
 
     public interface OnProfileClickListener{
         void onProfileClick(String screenName);

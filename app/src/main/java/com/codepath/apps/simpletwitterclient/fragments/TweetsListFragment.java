@@ -17,7 +17,6 @@ import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter;
 import com.codepath.apps.simpletwitterclient.fragments.TweetFragment.TweetSendListener;
 import com.codepath.apps.simpletwitterclient.listeners.EndlessScrollListener;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
-import com.codepath.apps.simpletwitterclient.models.User;
 import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
 import com.loopj.android.http.JsonHttpResponseHandler;
 

@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.ProgressBar;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -29,20 +27,18 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.apache.http.Header;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 public class TimelineActivity extends ActionBarActivity implements TweetSendListener, OnProfileClickListener {
     private static final String TAG = TimelineActivity.class.getSimpleName();
     private ViewPager vpPager;
     private User currentUser;
     private TweetsPagerAdapter tweetsPagerAdapter;
-    //private ProgressBar pb;
+    private ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        //pb = (ProgressBar) findViewById(R.id.pbLoading);
+        pb = (ProgressBar) findViewById(R.id.pbLoading);
         fetchCurrentUser();
         vpPager = (ViewPager) findViewById(R.id.viewpager);
         tweetsPagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
@@ -97,24 +93,25 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
     }
 
     public void onProfileView(MenuItem item) {
-        Intent i = new Intent(this, ProfileActivity.class);
-        startActivity(i);
+        onProfileClick(currentUser.screenName);
     }
 
     @Override
     public void onProfileClick(String screenName) {
+        showProgressBar();
         Intent i = new Intent(this, ProfileActivity.class);
         i.putExtra("screen_name", screenName);
         startActivity(i);
+        hideProgressBar();
     }
 
-    /*public void showProgressBar() {
+    public void showProgressBar() {
         pb.setVisibility(ProgressBar.VISIBLE);
     }
 
     public void hideProgressBar() {
         pb.setVisibility(ProgressBar.INVISIBLE);
-    } */
+    }
 
     public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
         private final String[] tabTitles = {"Home", "Mentions"};

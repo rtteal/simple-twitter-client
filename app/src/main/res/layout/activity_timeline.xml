@@ -4,24 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     tools:context="com.codepath.apps.simpletwitterclient.activities.TimelineActivity">
-<!--
-    <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:name="com.codepath.apps.simpletwitterclient.fragments.HomeTimelineFragment"
-        android:id="@+id/fragment_tweets_list"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        tools:layout="@layout/fragment_tweets_list"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true" /> -->
 
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
         app:pstsShouldExpand="true"
         app:pstsTextAllCaps="true"
+        android:textColor="@color/primary_blue"
+        app:pstsIndicatorColor="@color/primary_blue"
         android:layout_width="match_parent"
         android:layout_height="48dp">
     </com.astuetz.PagerSlidingTabStrip>
