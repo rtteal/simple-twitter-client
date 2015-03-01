@@ -3,7 +3,7 @@ package com.codepath.apps.simpletwitterclient.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +17,6 @@ import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter;
 import com.codepath.apps.simpletwitterclient.fragments.TweetFragment.TweetSendListener;
 import com.codepath.apps.simpletwitterclient.listeners.EndlessScrollListener;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
-import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.apache.http.Header;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +27,10 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
     private TweetArrayAdapter adapter;
     private TwitterClient client = TwitterApplication.getRestClient();
     private static final String TAG = TweetsListFragment.class.getSimpleName();
-    ProgressBar pb;
+    private ProgressBar pb;
+    private SwipeRefreshLayout swipeContainer;
+    String url;
+    String screenName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
@@ -45,6 +43,7 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
                 customLoadMoreDataFromApi(adapter.getItem(adapter.getCount()-1).uid - 26);
             }
         });
+        setUpSwipeRefresh(v);
         return v;
     }
 
@@ -53,39 +52,45 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
         super.onCreate(savedInstanceState);
         pb = (ProgressBar) getActivity().findViewById(R.id.pbLoading);
         adapter = new TweetArrayAdapter(getActivity(), tweets);
+        if (null != getArguments())
+            screenName = getArguments().getString("screen_name");
         populateTimeline();
     }
 
     @Override
     public void onTweetSend(String tweet) {
-        if (!TwitterHelpers.checkForInternetConnectivity(getActivity())) {
-            if (null != tweet && tweet.trim().length() > 0) {
-                showProgressBar();
-                client.sendTweet(tweet, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        hideProgressBar();
-                        adapter.insert(Tweet.fromJson(response), 0);
-                    }
+        client.sendTweet(tweet, this);
+    }
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.e(TAG, throwable.getMessage());
-                        hideProgressBar();
-                        populateTimelineFromDb();
-                    }
-                });
+    private void setUpSwipeRefresh(View v){
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadNewDataFromApi(adapter.getItem(0).uid);
+                swipeContainer.setRefreshing(false);
             }
-        }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     public void addAll(List<Tweet> tweets){
         adapter.addAll(tweets);
     }
 
-    void populateTimelineFromDb(){
+    public void populateTimelineFromDb(){
         adapter.clear();
-        addAll(Tweet.recentItems());
+        adapter.addAll(Tweet.recentItems());
+    }
+
+    public void insertAll(List<Tweet> tweets){
+        for (Tweet t : tweets)
+            adapter.insert(t, 0);
     }
 
     public void showProgressBar() {
@@ -96,7 +101,23 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
         pb.setVisibility(ProgressBar.INVISIBLE);
     }
 
-    abstract void customLoadMoreDataFromApi(long offset);
+    void populateTimeline() {
+        client.getTimeline(null, url, screenName, this);
+    }
 
-    abstract void populateTimeline();
+    void customLoadMoreDataFromApi(long maxId) {
+        client.getTimeline(maxId, TwitterClient.Type.GET_OLDER, url, screenName, this);
+    }
+
+    void loadNewDataFromApi(long maxId){
+        client.getTimeline(maxId, TwitterClient.Type.GET_NEWER, url, screenName, this);
+    }
+
+    public void insert(Tweet tweet){
+        adapter.insert(tweet, 0);
+    }
+
+    void setUrl(String url){
+        this.url = url;
+    }
 }

@@ -24,7 +24,7 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class UserheadFragment extends Fragment{
+public class UserheadFragment extends Fragment {
     private TwitterClient client = TwitterApplication.getRestClient();
     private static final String TAG = UserheadFragment.class.getSimpleName();
     ProgressBar pb;

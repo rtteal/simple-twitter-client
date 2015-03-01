@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="TwitterCl.db" />
+            android:value="TwitterCli.db" />
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
