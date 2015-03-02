@@ -1,7 +1,7 @@
 # SimpleTwitterClient
 [Week 4 Project: Simple Twitter Client](http://courses.codepath.com/courses/intro_to_android/week/4#!assignment)
 
-Time spent: 17 hours in total
+Time spent: 20 hours in total
 
 Completed user stories:
 
