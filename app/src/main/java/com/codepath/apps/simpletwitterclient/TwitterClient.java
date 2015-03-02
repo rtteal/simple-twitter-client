@@ -132,6 +132,7 @@ public class TwitterClient extends OAuthBaseClient {
             listener.setupCurrentUser(currentUser);
             return;
         }
+        listener.showProgressBar();
         String apiUrl = getApiUrl(CURRENT_USER);
         Log.d(TAG, apiUrl);
         getClient().get(apiUrl, new JsonHttpResponseHandler(){
@@ -139,11 +140,13 @@ public class TwitterClient extends OAuthBaseClient {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 currentUser = User.fromJson(response);
                 listener.setupCurrentUser(currentUser);
+                listener.hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG, throwable.getMessage());
+                listener.hideProgressBar();
             }
         });
     }
@@ -159,5 +162,7 @@ public class TwitterClient extends OAuthBaseClient {
 
     public interface OnCurrentUserRequestListener{
         void setupCurrentUser(User currentUser);
+        void showProgressBar();
+        void hideProgressBar();
     }
 }

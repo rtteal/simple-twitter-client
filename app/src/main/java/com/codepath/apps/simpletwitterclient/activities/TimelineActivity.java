@@ -79,10 +79,12 @@ public class TimelineActivity extends ActionBarActivity implements OnTweetSendLi
         hideProgressBar();
     }
 
+    @Override
     public void showProgressBar() {
         pb.setVisibility(ProgressBar.VISIBLE);
     }
 
+    @Override
     public void hideProgressBar() {
         pb.setVisibility(ProgressBar.INVISIBLE);
     }
