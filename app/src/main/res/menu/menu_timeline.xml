@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.codepath.apps.simpletwitterclient.activities.TimelineActivity" >
     <item android:id="@+id/action_compose_tweet" android:title="@string/compose"
-        app:showAsAction="ifRoom" android:icon="@mipmap/ic_compose_tweet5"/>
+        app:showAsAction="ifRoom" android:onClick="onComposeTweet" android:icon="@mipmap/ic_compose_tweet5"/>
     <item android:id="@+id/miProfile" app:showAsAction="ifRoom" android:icon="@drawable/ic_profile"
         android:title="@string/profile" android:onClick="onProfileView"/>
 </menu>

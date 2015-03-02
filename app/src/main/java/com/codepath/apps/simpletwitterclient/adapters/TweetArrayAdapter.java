@@ -17,8 +17,14 @@ import java.util.List;
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
     private static final String TAG = TweetArrayAdapter.class.getSimpleName();
 
-    public interface OnProfileClickListener{
+    public interface OnTweetClickListener {
         void onProfileClick(String screenName);
+        void onReplyClick(String screenName, String inResponseTo);
+    }
+
+    public interface OnTweetSendListener {
+        void onTweetSend(String tweet);
+        void onReplySend(String screenName, String inResponseTo);
     }
 
     public TweetArrayAdapter(Context context, List<Tweet> objects) {
@@ -37,6 +43,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
             viewHolder.tvScreenName = (TextView) convertView.findViewById(R.id.tvScreenName);
             viewHolder.tvBody = (TextView) convertView.findViewById(R.id.tvBody);
             viewHolder.tvRelativeTime = (TextView) convertView.findViewById(R.id.tvRelativeTime);
+            viewHolder.ivReply = (ImageView) convertView.findViewById(R.id.ivReply);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -49,8 +56,22 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder.ivProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getContext() instanceof OnProfileClickListener){
-                    ((OnProfileClickListener) getContext()).onProfileClick(tweet.user.screenName);
+                if (getContext() instanceof OnTweetClickListener){
+                    ((OnTweetClickListener) getContext()).onProfileClick(tweet.user.screenName);
+                } else {
+                    throw new ClassCastException(getContext().toString()
+                            + " must implement OnProfileClickListener");
+                }
+            }
+        });
+        viewHolder.ivReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getContext() instanceof OnTweetClickListener){
+                    ((OnTweetClickListener) getContext()).onReplyClick(tweet.user.screenName, "" + tweet.uid);
+                } else {
+                    throw new ClassCastException(getContext().toString()
+                            + " must implement OnReplyClickListener");
                 }
             }
         });
@@ -63,6 +84,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         private TextView tvScreenName;
         private TextView tvBody;
         private TextView tvRelativeTime;
+        private ImageView ivReply;
     }
 
 }

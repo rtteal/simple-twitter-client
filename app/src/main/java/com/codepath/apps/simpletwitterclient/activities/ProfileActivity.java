@@ -30,5 +30,4 @@ public class ProfileActivity extends ActionBarActivity {
             ft.commit();
         }
     }
-
 }

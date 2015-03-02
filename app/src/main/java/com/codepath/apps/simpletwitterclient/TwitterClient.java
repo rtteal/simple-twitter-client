@@ -3,8 +3,10 @@ package com.codepath.apps.simpletwitterclient;
 import android.content.Context;
 import android.util.Log;
 
+import com.codepath.apps.simpletwitterclient.activities.TimelineActivity;
 import com.codepath.apps.simpletwitterclient.fragments.TweetsListFragment;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
+import com.codepath.apps.simpletwitterclient.models.User;
 import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -30,6 +32,7 @@ public class TwitterClient extends OAuthBaseClient {
     public static final String CURRENT_USER = "account/verify_credentials.json";
     public static final String MENTIONS = "statuses/mentions_timeline.json";
     public static final String USER = "statuses/user_timeline.json";
+    private User currentUser;
     public enum Type {GET_NEWER, GET_OLDER}
 
 	public TwitterClient(Context context) {
@@ -98,13 +101,14 @@ public class TwitterClient extends OAuthBaseClient {
         });
     }
 
-    public void sendTweet(String tweet, final TweetsListFragment tweetsListFrag){
+    public void sendTweet(String tweet, String inResponseTo, final TweetsListFragment tweetsListFrag){
         if (TwitterHelpers.checkForInternetConnectivity(tweetsListFrag.getActivity()))
             return;
         if (null != tweet && tweet.trim().length() > 0) {
-            String apiUrl = getApiUrl("statuses/update.json");
+            String apiUrl = getApiUrl(TWEET);
             RequestParams params = new RequestParams();
             params.put("status", tweet);
+            if (inResponseTo != null) params.put("in_reply_to_status_id", inResponseTo);
             Log.d(TAG, apiUrl + ", params: " + params);
             getClient().post(apiUrl, params, new JsonHttpResponseHandler() {
                 @Override
@@ -123,10 +127,25 @@ public class TwitterClient extends OAuthBaseClient {
         }
     }
 
-    public void getCurrentUserInfo(AsyncHttpResponseHandler handler){
-        String apiUrl = getApiUrl("account/verify_credentials.json");
+    public void getCurrentUserInfo(final OnCurrentUserRequestListener listener){
+        if (currentUser != null) {
+            listener.setupCurrentUser(currentUser);
+            return;
+        }
+        String apiUrl = getApiUrl(CURRENT_USER);
         Log.d(TAG, apiUrl);
-        getClient().get(apiUrl, handler);
+        getClient().get(apiUrl, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                currentUser = User.fromJson(response);
+                listener.setupCurrentUser(currentUser);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(TAG, throwable.getMessage());
+            }
+        });
     }
 
     public void getUserTimeline(String screenName, AsyncHttpResponseHandler handler){
@@ -136,5 +155,9 @@ public class TwitterClient extends OAuthBaseClient {
         String apiUrl = getApiUrl("statuses/user_timeline.json");
         Log.d(TAG, apiUrl + ", params: " + params);
         getClient().get(apiUrl, params, handler);
+    }
+
+    public interface OnCurrentUserRequestListener{
+        void setupCurrentUser(User currentUser);
     }
 }

@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 
 import com.codepath.apps.simpletwitterclient.R;
 import com.codepath.apps.simpletwitterclient.TwitterClient;
+import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
 
 public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
@@ -49,8 +50,10 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	// Uses the client to initiate OAuth authorization
 	// This should be tied to a button used to login
 	public void loginToRest(View view) {
-        showProgressBar();
-        getClient().connect();
+        if (!TwitterHelpers.checkForInternetConnectivity(this)) {
+            showProgressBar();
+            getClient().connect();
+        }
 	}
 
     public void showProgressBar() {

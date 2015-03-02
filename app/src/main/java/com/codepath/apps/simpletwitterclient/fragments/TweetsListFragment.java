@@ -14,14 +14,14 @@ import com.codepath.apps.simpletwitterclient.R;
 import com.codepath.apps.simpletwitterclient.TwitterApplication;
 import com.codepath.apps.simpletwitterclient.TwitterClient;
 import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter;
-import com.codepath.apps.simpletwitterclient.fragments.TweetFragment.TweetSendListener;
 import com.codepath.apps.simpletwitterclient.listeners.EndlessScrollListener;
+import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter.OnTweetSendListener;
 import com.codepath.apps.simpletwitterclient.models.Tweet;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TweetsListFragment extends Fragment implements TweetSendListener {
+public abstract class TweetsListFragment extends Fragment implements OnTweetSendListener {
     private List<Tweet> tweets = new ArrayList<>();
     private ListView lvTweets;
     private TweetArrayAdapter adapter;
@@ -59,7 +59,12 @@ public abstract class TweetsListFragment extends Fragment implements TweetSendLi
 
     @Override
     public void onTweetSend(String tweet) {
-        client.sendTweet(tweet, this);
+        client.sendTweet(tweet, null, this);
+    }
+
+    @Override
+    public void onReplySend(String tweet, String inResponseTo) {
+        client.sendTweet(tweet, inResponseTo, this);
     }
 
     private void setUpSwipeRefresh(View v){

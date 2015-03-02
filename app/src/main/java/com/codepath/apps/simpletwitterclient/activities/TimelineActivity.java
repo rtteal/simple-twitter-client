@@ -14,23 +14,19 @@ import android.widget.ProgressBar;
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.simpletwitterclient.R;
 import com.codepath.apps.simpletwitterclient.TwitterApplication;
+import com.codepath.apps.simpletwitterclient.TwitterClient.OnCurrentUserRequestListener;
 import com.codepath.apps.simpletwitterclient.adapters.SmartFragmentStatePagerAdapter;
-import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter.OnProfileClickListener;
+import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter;
 import com.codepath.apps.simpletwitterclient.fragments.HomeTimelineFragment;
 import com.codepath.apps.simpletwitterclient.fragments.MentionsTimelineFragment;
 import com.codepath.apps.simpletwitterclient.fragments.TweetFragment;
-import com.codepath.apps.simpletwitterclient.fragments.TweetFragment.TweetSendListener;
+import com.codepath.apps.simpletwitterclient.adapters.TweetArrayAdapter.OnTweetSendListener;
 import com.codepath.apps.simpletwitterclient.models.User;
-import com.codepath.apps.simpletwitterclient.util.TwitterHelpers;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.apache.http.Header;
-import org.json.JSONObject;
-
-public class TimelineActivity extends ActionBarActivity implements TweetSendListener, OnProfileClickListener {
+public class TimelineActivity extends ActionBarActivity implements OnTweetSendListener, TweetArrayAdapter.OnTweetClickListener,
+        OnCurrentUserRequestListener {
     private static final String TAG = TimelineActivity.class.getSimpleName();
     private ViewPager vpPager;
-    private User currentUser;
     private TweetsPagerAdapter tweetsPagerAdapter;
     private ProgressBar pb;
 
@@ -39,7 +35,6 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         pb = (ProgressBar) findViewById(R.id.pbLoading);
-        fetchCurrentUser();
         vpPager = (ViewPager) findViewById(R.id.viewpager);
         tweetsPagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
         vpPager.setAdapter(tweetsPagerAdapter);
@@ -54,45 +49,24 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_compose_tweet) {
-            TweetFragment tweetFragment = TweetFragment.newInstance(currentUser);
-            tweetFragment.show(getSupportFragmentManager(), "fragment_tweet");
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void fetchCurrentUser(){
-        TwitterHelpers.checkForInternetConnectivity(this);
-        TwitterApplication.getRestClient().getCurrentUserInfo(new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                currentUser = User.fromJson(response);
-                Log.d(TAG, "user created: " + currentUser);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e(TAG, throwable.getMessage());
-            }
-        });
+    public void onComposeTweet(MenuItem item){
+        TweetFragment tweetFragment = TweetFragment.newInstance(null, null);
+        tweetFragment.show(getSupportFragmentManager(), "fragment_tweet");
     }
 
     @Override
     public void onTweetSend(String tweet) {
-        ((TweetSendListener) tweetsPagerAdapter.getRegisteredFragment(0)).onTweetSend(tweet);
+        ((OnTweetSendListener) tweetsPagerAdapter.getRegisteredFragment(0)).onTweetSend(tweet);
         vpPager.setCurrentItem(0, true);
     }
 
     public void onProfileView(MenuItem item) {
+        // will callback to setupCurrentUser upon completion
+        TwitterApplication.getRestClient().getCurrentUserInfo(this);
+    }
+
+    @Override
+    public void setupCurrentUser(User currentUser) {
         onProfileClick(currentUser.screenName);
     }
 
@@ -111,6 +85,18 @@ public class TimelineActivity extends ActionBarActivity implements TweetSendList
 
     public void hideProgressBar() {
         pb.setVisibility(ProgressBar.INVISIBLE);
+    }
+
+    @Override
+    public void onReplyClick(String screenName, String inResponseTo) {
+        TweetFragment tweetFragment = TweetFragment.newInstance(screenName, inResponseTo);
+        tweetFragment.show(getSupportFragmentManager(), "fragment_tweet");
+    }
+
+    @Override
+    public void onReplySend(String tweet, String inResponseTo) {
+        ((OnTweetSendListener) tweetsPagerAdapter.getRegisteredFragment(0)).onReplySend(tweet, inResponseTo);
+        vpPager.setCurrentItem(0, true);
     }
 
     public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
