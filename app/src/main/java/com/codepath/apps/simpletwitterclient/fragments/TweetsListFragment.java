@@ -73,7 +73,8 @@ public abstract class TweetsListFragment extends Fragment implements OnTweetSend
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadNewDataFromApi(adapter.getItem(0).uid);
+                if (!adapter.isEmpty())
+                    loadNewDataFromApi(adapter.getItem(0).uid);
                 swipeContainer.setRefreshing(false);
             }
         });

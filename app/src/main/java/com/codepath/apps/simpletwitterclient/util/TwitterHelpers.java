@@ -7,9 +7,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class TwitterHelpers {
+    private static AlertDialog alertDialog;
+
     public static boolean checkForInternetConnectivity(Context context) {
         if (!isNetworkAvailable(context)) {
-            AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+            if (alertDialog != null && alertDialog.isShowing()){
+                return true;
+            }
+            alertDialog = new AlertDialog.Builder(context).create();
             alertDialog.setTitle("Alert");
             alertDialog.setMessage("Unable to connect to the internet.  Operating on offline mode.");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",

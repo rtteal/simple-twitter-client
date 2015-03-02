@@ -57,6 +57,7 @@ public class Tweet extends Model {
             long uid = json.getLong("id");
             long creationTime = getCreationTime(json.getString("created_at"));
             User user = User.fromJson(json.getJSONObject("user"));
+            if (null == user) return null;
             Tweet tweet = new Tweet(body, creationTime, uid, user);
             Tweet t = getById(uid);
             if (null == t) {
@@ -95,7 +96,11 @@ public class Tweet extends Model {
     }
 
     public static List<Tweet> recentItems() {
-        return new Select().from(Tweet.class).orderBy("creation_time DESC").limit("300").execute();
+        return new Select()
+                .from(Tweet.class)
+                .where(" user is not null ")
+                .orderBy("creation_time DESC")
+                .limit("300").execute();
     }
 
     private static long getCreationTime(final String input){

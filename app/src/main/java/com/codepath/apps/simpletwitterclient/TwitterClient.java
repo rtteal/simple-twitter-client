@@ -1,6 +1,8 @@
 package com.codepath.apps.simpletwitterclient;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.codepath.apps.simpletwitterclient.activities.TimelineActivity;
@@ -61,8 +63,10 @@ public class TwitterClient extends OAuthBaseClient {
      * @param tweetsListFrag
      */
     public void getTimeline(long maxId, Type type, String url, String screenName, final TweetsListFragment tweetsListFrag){
-        if (TwitterHelpers.checkForInternetConnectivity(tweetsListFrag.getActivity()))
+        if (TwitterHelpers.checkForInternetConnectivity(tweetsListFrag.getActivity())){
+            tweetsListFrag.populateTimelineFromDb();
             return;
+        }
         RequestParams params = new RequestParams();
         params.put("count", 25);
         if (maxId == 1) params.put("since_id", maxId);
@@ -124,12 +128,17 @@ public class TwitterClient extends OAuthBaseClient {
                     tweetsListFrag.populateTimelineFromDb();
                 }
             });
+        } else {
+            tweetsListFrag.populateTimelineFromDb();
         }
     }
 
     public void getCurrentUserInfo(final OnCurrentUserRequestListener listener){
         if (currentUser != null) {
             listener.setupCurrentUser(currentUser);
+            return;
+        }
+        if (TwitterHelpers.checkForInternetConnectivity(listener.getActivity())){
             return;
         }
         listener.showProgressBar();
@@ -164,5 +173,6 @@ public class TwitterClient extends OAuthBaseClient {
         void setupCurrentUser(User currentUser);
         void showProgressBar();
         void hideProgressBar();
+        Activity getActivity();
     }
 }

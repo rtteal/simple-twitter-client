@@ -1,5 +1,6 @@
 package com.codepath.apps.simpletwitterclient.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -90,6 +91,11 @@ public class TimelineActivity extends ActionBarActivity implements OnTweetSendLi
     }
 
     @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
     public void onReplyClick(String screenName, String inResponseTo) {
         TweetFragment tweetFragment = TweetFragment.newInstance(screenName, inResponseTo);
         tweetFragment.show(getSupportFragmentManager(), "fragment_tweet");
@@ -100,6 +106,7 @@ public class TimelineActivity extends ActionBarActivity implements OnTweetSendLi
         ((OnTweetSendListener) tweetsPagerAdapter.getRegisteredFragment(0)).onReplySend(tweet, inResponseTo);
         vpPager.setCurrentItem(0, true);
     }
+
 
     public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
         private final String[] tabTitles = {"Home", "Mentions"};
